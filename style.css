@@ -51,4 +51,13 @@ body {
 .el:not(:last-child) {
     margin-right: 5vmax;
 }
+.el_1 {
+    transform: translateY(calc( (1 - var(--scroll)) + 10px) rotate(var(--rotate)))
+}
+.el_2 {
+    transform: translateY(calc( (1 - var(--scroll)) + 20px ) rotate(var(--rotate)))
+}
+.el_3 {
+    transform: translateY(calc( (1 - var(--scroll)) + 20px ) rotate(var(--rotate)))
+}
 

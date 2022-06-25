@@ -1,17 +1,43 @@
 const speed = 0.04
-const rotateSpeed = 0.06
+const rotateSpeed = 0.02
 
 let offsetScroll = 0,
     currentOffset = 0,
+    elemOffset = 0,
     backgroundImageHeight = window.innerHeight * 2 - 100,
     isScrollRun = true,
     isCubesComplete = false,
     currentSquare = 0,
     rotateOffset = 0,
-    currentRotate = 0
+    currentRotate = 0,
+    posInit = 0,
+    posRotate = 0,
+    isDrag = false;
 
+    const scrollElement = document.querySelector('[data-section]'),
+        squares = document.querySelectorAll('.el'),
+        square = document.querySelector('.el_1')
 
-const initialiseScroll = (event) => {
+    document.addEventListener('pointerdown', (event) => {
+        event.preventDefault()
+        posInit = event.clientY + offsetScroll
+        posRotate = event.clientY + rotateOffset
+        isDrag = true
+    })
+    
+    window.addEventListener('pointermove', (event) => {
+    if (isDrag) {
+        isScrollRun ? offsetScroll = posInit - event.clientY : rotateOffset = (posRotate - event.clientY)
+        if (offsetScroll < 0) {
+            offsetScroll = 0
+        } else if (offsetScroll > backgroundImageHeight) {
+            offsetScroll = backgroundImageHeight
+        }
+    }
+    })
+    window.addEventListener('pointerup', () => {
+        isDrag = false})
+    const initialiseScroll = (event) => {
     if (offsetScroll < 0) {
         offsetScroll = 0
     } else if (offsetScroll > backgroundImageHeight) {
@@ -19,16 +45,17 @@ const initialiseScroll = (event) => {
     }
 
     isScrollRun ? offsetScroll += event.deltaY : rotateOffset += event.deltaY / 10
-} 
-const initialiseScreen = () => {
-    backgroundImageHeight = window.innerHeight * 2 - 100
-}
+    }
+    scrollElement.addEventListener('touchstart', (event) => {
+        event.preventDefault()
+    })
+    const initialiseScreen = () => {
+        backgroundImageHeight = window.innerHeight * 2 - 100
+    }
 
-const scrollElement = document.querySelector('[data-section]'),
-    squares = document.querySelectorAll('.el')
     
-document.addEventListener('wheel', initialiseScroll)
-window.addEventListener('resize', initialiseScreen)
+    document.addEventListener('wheel', initialiseScroll)
+    window.addEventListener('resize', initialiseScreen)
 
 
 function animation() {
@@ -46,15 +73,13 @@ function animation() {
     requestAnimationFrame(animation)
 }
 
-function scroll(currentOffset) {
-    let scroll = "translateY(-" + currentOffset + "px) translateZ(0)"
+function scroll() {
+    const scroll = "translateY(-" + currentOffset + "px) translateZ(0)"
     scrollElement.style.transform = scroll
 }
 
 function rotate() {
-    console.log(currentRotate, currentSquare, rotateOffset)
     currentRotate += (rotateOffset - currentRotate) * rotateSpeed
-    const rotateStyle = `rotate(${currentRotate}deg)`
     if (currentRotate < 0 && currentSquare === 0) {
         isScrollRun = true
         isCubesComplete = false
@@ -70,7 +95,6 @@ function rotate() {
         currentOffset = window.innerHeight
         currentRotate = 89
         rotateOffset = 80
-        console.log(offsetScroll, currentOffset)
         return
     }
     if (Math.floor(currentRotate) >= 90) {
@@ -82,6 +106,7 @@ function rotate() {
         rotateOffset = 90
         currentRotate = 90
     }
+    const rotateStyle = `rotate(${currentRotate}deg)`
     squares[currentSquare].style.transform = rotateStyle
 }
 
