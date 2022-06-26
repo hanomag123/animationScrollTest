@@ -8,16 +8,15 @@ let offsetScroll = 0,
     isScrollRun = true,
     isCubesComplete = false,
     currentSquare = 0,
-    rotateOffset = 0,
+    rotateOffset = 0.1,
     currentRotate = 0,
     posInit = 0,
     posRotate = 0,
     isDrag = false;
 
     const scrollElement = document.querySelector('[data-section]'),
-        squares = document.querySelectorAll('.el'),
-        square = document.querySelector('.el_1')
-
+        squares = document.querySelectorAll('.el')
+        
     document.addEventListener('pointerdown', (event) => {
         event.preventDefault()
         posInit = event.clientY + offsetScroll
@@ -59,6 +58,7 @@ let offsetScroll = 0,
 
 
 function animation() {
+    console.log(currentRotate)
     currentOffset += (offsetScroll - currentOffset) * speed
     if (currentOffset > window.innerHeight && isCubesComplete === false) {
         isScrollRun = false
@@ -80,33 +80,42 @@ function scroll() {
 
 function rotate() {
     currentRotate += (rotateOffset - currentRotate) * rotateSpeed
-    if (currentRotate < 0 && currentSquare === 0) {
-        isScrollRun = true
-        isCubesComplete = false
-        offsetScroll = window.innerHeight
-        currentOffset = window.innerHeight
+    if (currentRotate > 90) {
+        currentRotate = 90
+    } else if (currentRotate < 0) {
         currentRotate = 0
-        rotateOffset = 0
-        return
-    } else if (currentRotate >= 90 && currentSquare === squares.length - 1) {
+    }
+    const rotateStyle = `rotate(${currentRotate}deg)`
+    if (currentRotate === 90 && currentSquare === squares.length - 1) {
         isScrollRun = true
         isCubesComplete = true
         offsetScroll = window.innerHeight
         currentOffset = window.innerHeight
         currentRotate = 89
         rotateOffset = 80
+    } else if (currentRotate === 0 && currentSquare === 0) {
+        squares[currentSquare].style.transform = rotateStyle
+        isScrollRun = true
+        isCubesComplete = false
+        offsetScroll = window.innerHeight
+        currentOffset = window.innerHeight
+        currentRotate = 0
+        rotateOffset = 0.1
         return
     }
-    if (Math.floor(currentRotate) >= 90) {
+    if (currentRotate === 90) {
+        squares[currentSquare].style.transform = rotateStyle
         currentSquare++
         rotateOffset = 0
         currentRotate = 0
-    } else if (Math.floor(currentRotate) < 0) {
+        return
+    } else if (currentRotate === 0) {
+        squares[currentSquare].style.transform = rotateStyle
         currentSquare--
         rotateOffset = 90
         currentRotate = 90
+        return
     }
-    const rotateStyle = `rotate(${currentRotate}deg)`
     squares[currentSquare].style.transform = rotateStyle
 }
 
