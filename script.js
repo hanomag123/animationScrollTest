@@ -58,7 +58,6 @@ let offsetScroll = 0,
 
 
 function animation() {
-    console.log(currentRotate)
     currentOffset += (offsetScroll - currentOffset) * speed
     if (currentOffset > window.innerHeight && isCubesComplete === false) {
         isScrollRun = false
